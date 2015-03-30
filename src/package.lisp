@@ -40,6 +40,12 @@
   (:import-from #:cram-reasoning #:<- #:def-fact-group)
   (:import-from #:cram-manipulation-knowledge
                 trajectory-point end-effector-link)
+  (:import-from #:cram-plan-knowledge
+                object-perceived-event
+                object-updated-event
+                object-removed-event)
+  (:import-from #:cram-environment-representation
+                on-event)
   (:export robosherlock-process-module
            infer-object-property
            perceived-object-invalid

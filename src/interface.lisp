@@ -276,7 +276,10 @@ by the `name' property specified in their designator."
                       (btr:retract
                        (btr:object
                         ?w ,object-name))))
-    (moveit:remove-collision-object object-name)))
+    (cram-plan-knowledge:on-event
+     (make-instance 'object-removed-event
+                    :perception-source :robosherlock
+                    :object-name object-name))))
 
 (defun add-appeared-objects (objects)
   "Adds objects to the current bullet world. In the world, they then
@@ -286,7 +289,7 @@ property in their designator."
     (let ((pose (desig-prop-value
                  (desig-prop-value object 'at)
                  'pose))
-          (dimensions (desig-prop-value object 'dimensions))
+          ;;(dimensions (desig-prop-value object 'dimensions))
           (name (desig-prop-value object 'name)))
       (ros-info (robosherlock-pm) "Add object: ~a" name)
       ;; (crs:prolog `(and (btr:bullet-world ?w)
@@ -301,12 +304,10 @@ property in their designator."
                           ?w btr::mesh ,name ,pose
                           :mass 0.1
                           :mesh desig-props::mondamin :color (0.8 0.4 0.2))))))
-    (moveit:register-collision-object
-     object :add t
-     :pose-stamped (cl-tf2:ensure-pose-stamped-transformed
-                    *tf2*
-                    (desig-prop-value (desig-prop-value object 'at) 'pose)
-                    *object-reference-frame*))))
+    (cram-plan-knowledge:on-event
+     (make-instance 'object-perceived-event
+                    :perception-source :robosherlock
+                    :object-designator object))))
 
 (defun update-objects (objects)
   "Updates objects' poses in the current bullet world based on the
@@ -321,12 +322,10 @@ property in their designator."
                         (btr:assert
                          (btr:object-pose
                           ?w ,name ,pose)))))
-    (moveit:register-collision-object
-     object :add t
-     :pose-stamped (cl-tf2:ensure-pose-stamped-transformed
-                    *tf2*
-                    (desig-prop-value (desig-prop-value object 'at) 'pose)
-                    *object-reference-frame*))))
+    (cram-plan-knowledge:on-event
+     (make-instance 'object-updated-event
+                    :perception-source :robosherlock
+                    :object-designator object))))
 
 (defmethod designators-match ((template object-designator)
                               (subject object-designator))

@@ -35,7 +35,6 @@
   <build_depend>actionlib</build_depend>
   <build_depend>cram_designators</build_depend>
   <build_depend>cram_uima</build_depend>
-  <build_depend>cram_moveit</build_depend>
   
   <run_depend>roslisp</run_depend>
   <run_depend>alexandria</run_depend>
@@ -55,6 +54,5 @@
   <run_depend>actionlib</run_depend>
   <run_depend>cram_designators</run_depend>
   <run_depend>cram_uima</run_depend>
-  <run_depend>cram_moveit</run_depend>
   
 </package>

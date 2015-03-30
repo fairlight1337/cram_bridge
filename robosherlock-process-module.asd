@@ -44,8 +44,7 @@
                cl-semantic-map-utils
                semantic-map-costmap
                actionlib
-               cram-uima
-               cram-moveit)
+               cram-uima)
   :components
   ((:module "src"
     :components

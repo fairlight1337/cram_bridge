@@ -19,8 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   semantic_map_costmap
   actionlib
   cram_designators
-  cram_uima
-  cram_moveit)
+  cram_uima)
 
 catkin_package()
 include_directories(

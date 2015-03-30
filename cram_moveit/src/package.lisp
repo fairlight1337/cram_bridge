@@ -101,7 +101,9 @@
    set-object-color)
   (:import-from cram-roslisp-common *tf2*)
   (:import-from cram-environment-representation
-                on-event object-perceived)
+                on-event object-perceived
+                object-perceived-event
+                event-object-designator)
   (:desig-properties #:shape #:dimensions #:box #:cylinder
                      #:sphere #:cone #:round #:name #:yellow
                      #:color))

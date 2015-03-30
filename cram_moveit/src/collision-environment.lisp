@@ -399,3 +399,14 @@ bridge.")
            (moveit)
            "Detaching collision object `~a' from link `~a'."
            name (tf:frame-id current-pose-stamped)))))))
+
+(defmethod on-event object-perceived ((event object-perceived-event))
+  (let ((object (event-object-designator event)))
+    (moveit:register-collision-object
+     object
+     :add t
+     :pose-stamped
+     (cl-tf2:ensure-pose-stamped-transformed
+      *tf2*
+      (desig-prop-value (desig-prop-value object 'at) 'pose)
+      designators-ros:*fixed-frame*))))

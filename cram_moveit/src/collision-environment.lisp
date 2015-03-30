@@ -301,9 +301,7 @@ bridge.")
                           (tf:frame-id current-pose-stamped)
                           target-link)
         (let* ((pose-in-link
-                 (cl-tf2:ensure-pose-stamped-transformed
-                  *tf2* current-pose-stamped target-link
-                  :use-current-ros-time t))
+                 (cl-tf2:do-transform *tf2* current-pose-stamped target-link))
                (obj-msg-plain (create-collision-object-message
                                name pose-in-link
                                :primitive-shapes primitive-shapes
@@ -361,11 +359,11 @@ bridge.")
                  :source-frame (tf:frame-id current-pose-stamped)
                  :target-frame target-link)
           (cpl:fail 'pose-not-transformable-into-link))
-        (let* ((pose-in-link (cl-tf2:ensure-pose-stamped-transformed
+        (let* ((pose-in-link (cl-tf2:do-transform
                               *tf2* (tf:copy-pose-stamped
                                      current-pose-stamped
                                      :stamp time)
-                              target-link :use-current-ros-time t))
+                              target-link))
                (obj-msg-plain (create-collision-object-message
                                name pose-in-link
                                :primitive-shapes primitive-shapes

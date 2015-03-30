@@ -410,3 +410,15 @@ bridge.")
       *tf2*
       (desig-prop-value (desig-prop-value object 'at) 'pose)
       designators-ros:*fixed-frame*))))
+
+(defmethod on-event object-updated ((event object-updated-event))
+  (let ((object (event-object-designator event)))
+    (moveit:register-collision-object
+     object :add t
+            :pose-stamped (cl-tf2:ensure-pose-stamped-transformed
+                           *tf2*
+                           (desig-prop-value (desig-prop-value object 'at) 'pose)
+                           designators-ros:*fixed-frame*))))
+
+(defmethod on-event object-removed ((event object-removed-event))
+  (remove-collision-object (event-object-name event)))

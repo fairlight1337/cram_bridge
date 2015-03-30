@@ -44,6 +44,7 @@
                moveit_msgs-msg
                moveit_msgs-srv
                roslisp-utilities
+               cram-environment-representation
                cl-tf2)
   :components
   ((:module "src"

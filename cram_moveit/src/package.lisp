@@ -100,6 +100,8 @@
    display-robot-state
    set-object-color)
   (:import-from cram-roslisp-common *tf2*)
+  (:import-from cram-environment-representation
+                on-event object-perceived)
   (:desig-properties #:shape #:dimensions #:box #:cylinder
                      #:sphere #:cone #:round #:name #:yellow
                      #:color))

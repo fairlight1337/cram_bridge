@@ -189,7 +189,7 @@
                                   `((at ,(make-designator
                                           'location
                                           `((pose
-                                             ,(cl-tf2:ensure-pose-stamped-transformed
+                                             ,(cl-tf2:do-transform
                                                *tf2*
                                                (cond ((and pose
                                                            (find 'flat (desig-prop-values
@@ -198,7 +198,7 @@
                                                       pose)
                                                      (pose-bb pose-bb)
                                                      (t pose))
-                                               target-frame :use-current-ros-time t))))))
+                                               target-frame))))))
                                   `((name ,(intern (concatenate 'string "OBJECT"
                                                                 (write-to-string
                                                                  (truncate id)))
@@ -303,7 +303,7 @@ property in their designator."
                           :mesh desig-props::mondamin :color (0.8 0.4 0.2))))))
     (moveit:register-collision-object
      object :add t
-     :pose-stamped (cl-tf2:ensure-pose-stamped-transformed
+     :pose-stamped (cl-tf2:do-transform
                     *tf2*
                     (desig-prop-value (desig-prop-value object 'at) 'pose)
                     *object-reference-frame*))))
@@ -323,7 +323,7 @@ property in their designator."
                           ?w ,name ,pose)))))
     (moveit:register-collision-object
      object :add t
-     :pose-stamped (cl-tf2:ensure-pose-stamped-transformed
+     :pose-stamped (cl-tf2:do-transform
                     *tf2*
                     (desig-prop-value (desig-prop-value object 'at) 'pose)
                     *object-reference-frame*))))
@@ -379,6 +379,8 @@ the original location designator's described area, if applicable."
        ;; any). Now see if it gets accepted based on external factors.
        perceived-object))
    perceived-objects))
+
+(defgeneric location-valid (template object))
 
 (defmethod location-valid ((template object-designator)
                            (object object-designator))

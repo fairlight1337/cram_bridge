@@ -272,10 +272,6 @@ description."
 by the `name' property specified in their designator."
   (dolist (object-name object-names)
     (ros-info (robosherlock-pm) "Remove object: ~a" object-name)
-    (crs:prolog `(and (btr:bullet-world ?w)
-                      (btr:retract
-                       (btr:object
-                        ?w ,object-name))))
     (cram-plan-knowledge:on-event
      (make-instance 'object-removed-event
                     :perception-source :robosherlock
@@ -286,24 +282,8 @@ by the `name' property specified in their designator."
 consist of boxes of dimensions as specified in the `dimensions'
 property in their designator."
   (dolist (object objects)
-    (let ((pose (desig-prop-value
-                 (desig-prop-value object 'at)
-                 'pose))
-          ;;(dimensions (desig-prop-value object 'dimensions))
-          (name (desig-prop-value object 'name)))
-      (ros-info (robosherlock-pm) "Add object: ~a" name)
-      ;; (crs:prolog `(and (btr:bullet-world ?w)
-      ;;                   (btr:assert
-      ;;                    (btr:object
-      ;;                     ?w btr:box ,name ,pose
-      ;;                     :mass 0.1
-      ;;                     :size ,(map 'list #'identity dimensions)))))
-      (crs:prolog `(and (btr:bullet-world ?w)
-                        (btr:assert
-                         (btr:object
-                          ?w btr::mesh ,name ,pose
-                          :mass 0.1
-                          :mesh desig-props::mondamin :color (0.8 0.4 0.2))))))
+    (ros-info (robosherlock-pm)
+              "Add object: ~a" (desig-prop-value object 'name))
     (cram-plan-knowledge:on-event
      (make-instance 'object-perceived-event
                     :perception-source :robosherlock
@@ -318,10 +298,6 @@ property in their designator."
                  'pose))
           (name (desig-prop-value object 'name)))
       (ros-info (robosherlock-pm) "Update object: ~a" name)
-      (crs:prolog `(and (btr:bullet-world ?w)
-                        (btr:assert
-                         (btr:object-pose
-                          ?w ,name ,pose)))))
     (cram-plan-knowledge:on-event
      (make-instance 'object-updated-event
                     :perception-source :robosherlock
@@ -364,6 +340,19 @@ way, reference and unknown object type comparisons are avoided."
                 ;t
                 ))))) ;; NOTE(winkler): This is a hack.
 
+(defmethod location-valid ((template object-designator)
+                           (object object-designator))
+  (let ((at-template (desig-prop-value template 'desig-props::at))
+        (at-object (desig-prop-value object 'desig-props::at)))
+    (cond (at-template
+           (let ((first-at (first-desig at-template)))
+             (cond ((desig-prop-value at-object 'desig-props::pose) t)
+                   (t (validate-location-designator-solution
+                       first-at
+                       (slot-value at-object
+                                   'desig::current-solution))))))
+          (t t))))
+
 (defmethod filter-perceived-objects ((template-designator object-designator)
                                      (perceived-objects list))
   "Filters out all object designator instances in the
@@ -378,19 +367,6 @@ the original location designator's described area, if applicable."
        ;; any). Now see if it gets accepted based on external factors.
        perceived-object))
    perceived-objects))
-
-(defmethod location-valid ((template object-designator)
-                           (object object-designator))
-  (let ((at-template (desig-prop-value template 'desig-props::at))
-        (at-object (desig-prop-value object 'desig-props::at)))
-    (cond (at-template
-           (let ((first-at (first-desig at-template)))
-             (cond ((desig-prop-value at-object 'desig-props::pose) t)
-                   (t (validate-location-designator-solution
-                       first-at
-                       (slot-value at-object
-                                   'desig::current-solution))))))
-          (t t))))
 
 (defmethod perceive-object-designator ((object-designator object-designator))
   "Triggers operation of the external perception system to find out
@@ -511,7 +487,12 @@ retracted from the internal representation. The parameter
                                    :pose (desig-prop-value
                                           (desig-prop-value
                                            examined-object-designator 'desig-props::at)
-                                          'desig-props::pose))))
+                                          'desig-props::pose)
+                                   :shape-type :box
+                                   :dimensions
+                                   (desig-prop-value
+                                    examined-object-designator
+                                    'dimensions))))
                         (make-effective-designator
                          object-designator
                          :new-properties (description examined-object-designator)
@@ -519,4 +500,4 @@ retracted from the internal representation. The parameter
                     (mapcar (lambda (perceived-object-designator)
                               (examine-perceived-object-designator
                                object-designator perceived-object-designator))
-                            perceived-object-designators)))))))))
+                            perceived-object-designators))))))))))

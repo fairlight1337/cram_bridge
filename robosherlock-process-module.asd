@@ -39,6 +39,7 @@
                cram-projection
                cram-roslisp-common
                cram-language
+               cram-environment-representation
                cram-manipulation-knowledge
                cram-plan-failures
                cl-semantic-map-utils

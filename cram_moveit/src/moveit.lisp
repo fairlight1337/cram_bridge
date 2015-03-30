@@ -107,8 +107,8 @@ MoveIt! framework and registers known conditions."
                        (poses-stamped (mapcar
                                        (lambda (pose-stamped)
                                          (tf:pose->pose-stamped
-                                          (cl-tf2:unslash-frame (tf:frame-id
-                                                                 pose-stamped))
+                                          (cl-tf2::unslash-frame (tf:frame-id
+                                                                  pose-stamped))
                                           (tf:stamp pose-stamped)
                                           pose-stamped))
                                        (cond ((listp pose-stamped) pose-stamped)
@@ -714,8 +714,7 @@ as only the final configuration IK is generated."
 
 (defun check-base-pose-validity (pose-stamped)
   (with-lock-held (*moveit-pose-validity-check-lock*)
-    (let* ((pose-stamped-oc (cl-tf2:ensure-pose-stamped-transformed
-                             *tf2* pose-stamped "odom_combined" :use-current-ros-time t))
+    (let* ((pose-stamped-oc (cl-tf2:do-transform *tf2* pose-stamped "odom_combined"))
            (origin (tf:origin pose-stamped-oc))
            (orientation (tf:orientation pose-stamped-oc)))
       (let ((adv (roslisp:advertise "/dhdhdh" "geometry_msgs/PoseStamped")))

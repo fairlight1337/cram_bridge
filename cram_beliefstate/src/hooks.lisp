@@ -418,14 +418,14 @@
                (object-type (desig-prop-value newest 'desig-props::type)))
           (when pose
             (let* ((robot-pose-map
-                     (cl-tf2:ensure-pose-stamped-transformed
+                     (cl-tf2:do-transform
                       *tf2* (tf:make-pose-stamped
                              "base_footprint" 0.0
                              (tf:make-identity-vector)
                              (tf:make-identity-rotation))
                       "map"))
                    (object-pose-map
-                     (cl-tf2:ensure-pose-stamped-transformed
+                     (cl-tf2:do-transform
                       *tf2* pose "map"))
                    (distance-2d
                      (tf:v-dist (tf:make-3d-vector
@@ -454,14 +454,14 @@
                             object 'desig-props::type)))
           (when pose
             (let* ((robot-pose-map
-                     (cl-tf2:ensure-pose-stamped-transformed
+                     (cl-tf2:do-transform
                       *tf2* (tf:make-pose-stamped
                              "base_footprint" 0.0
                              (tf:make-identity-vector)
                              (tf:make-identity-rotation))
                       "map"))
                    (putdown-pose-map
-                     (cl-tf2:ensure-pose-stamped-transformed
+                     (cl-tf2:do-transform
                       *tf2* pose "map"))
                    (distance-2d
                      (tf:v-dist (tf:make-3d-vector

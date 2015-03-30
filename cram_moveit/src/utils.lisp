@@ -59,15 +59,13 @@
 coordinates of link `link-frame'. This can be for example used for
 checking how far away a given grasp pose is from the gripper frame."
   (tf:v-dist (tf:make-identity-vector)
-             (tf:origin (cl-tf2:ensure-pose-stamped-transformed
-                         *tf2* pose-stamped link-frame :use-current-ros-time t))))
+             (tf:origin (cl-tf2:do-transform *tf2* pose-stamped link-frame))))
 
 (defun motion-length (link-name planning-group pose-stamped
                         &key allowed-collision-objects
                           highlight-links)
   (let* ((pose-stamped-transformed
-           (cl-tf2:ensure-pose-stamped-transformed
-            *tf2* pose-stamped "/torso_lift_link" :use-current-ros-time t))
+           (cl-tf2:do-transform *tf2* pose-stamped "/torso_lift_link"))
          (state-0 (moveit:plan-link-movement
                    link-name planning-group
                    pose-stamped-transformed

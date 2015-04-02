@@ -162,7 +162,7 @@ bridge.")
     (unless (or primitive-shapes mesh-shapes plane-shapes)
       (cpl:fail 'no-collision-shapes-defined))
     (flet* ((resolve-pose (pose-msg)
-              (or pose-msg (tf:pose->msg pose-stamped)))
+              (or pose-msg (cl-transforms-plugin::pose->msg (cl-transforms-plugin::pose pose-stamped))))
             (pose-present (object)
               (and (listp object) (cdr object)))
             (resolve-object (obj)
@@ -173,8 +173,8 @@ bridge.")
               (map 'vector #'resolve-pose (mapcar #'pose-present poses))))
       (let* ((obj-msg (roslisp:make-msg
                        "moveit_msgs/CollisionObject"
-                       (stamp header) (tf:stamp pose-stamped)
-                       (frame_id header) (tf:frame-id pose-stamped)
+                       (stamp header) (cl-tf2::get-time-stamp pose-stamped)
+                       (frame_id header) (cl-tf2::get-frame-id pose-stamped)
                        id name
                        operation (roslisp-msg-protocol:symbol-code
                                   'moveit_msgs-msg:collisionobject
@@ -360,10 +360,16 @@ bridge.")
                  :target-frame target-link)
           (cpl:fail 'pose-not-transformable-into-link))
         (let* ((pose-in-link (cl-tf2:do-transform
-                              *tf2* (tf:copy-pose-stamped
-                                     current-pose-stamped
-                                     :stamp time)
-                              target-link))
+                               *tf2*
+                               (cl-transforms-plugin:copy-pose-stamped
+                                current-pose-stamped
+                                :header
+                                (make-instance
+                                 'cl-transforms-plugin:header
+                                 :frame-id (cl-transforms-plugin::get-frame-id
+                                            current-pose-stamped)
+                                 :stamp time))
+                               target-link))
                (obj-msg-plain (create-collision-object-message
                                name pose-in-link
                                :primitive-shapes primitive-shapes

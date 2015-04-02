@@ -50,6 +50,21 @@
 (cut:define-hook cram-language::on-prepare-perception-request (designator-request))
 (cut:define-hook cram-language::on-finish-perception-request (log-id designators-result))
 
+(defun restamp-pose-stamped (pose-stamped &key time)
+  (let ((time (or time (roslisp:ros-time))))
+    (cl-transforms-plugin:make-pose-stamped
+     (cl-transforms-plugin:pose pose-stamped)
+     (cl-tf2::get-frame-id pose-stamped)
+     time)))
+
+(defun do-transform-safe (buffer object target-frame &key (timeout 0.0))
+  (cpl:with-failure-handling
+      ((CL-TF2:TF2-BUFFER-CLIENT-ERROR (f)
+         (declare (ignore f))
+         (sleep 0.05)
+         (cpl:retry)))
+    (cl-tf2:do-transform buffer object target-frame :timeout timeout)))
+
 (defun ignore-bullet-object (object-name)
   (setf *ignored-bullet-objects*
         (remove object-name *ignored-bullet-objects*))
@@ -169,45 +184,46 @@
                                  (remove-if (lambda (x)
                                               (find (car x) remove-properties))
                                             (description perception-result)))
-                               (pose (desig-prop-value perception-result 'pose))
                                (resolution (desig-prop-value perception-result
                                                              'resolution))
-                               (id (or (sub-value 'objectid resolution)
-                                       (parse-integer
-                                        (desig-prop-value perception-result
-                                                          'desig-props::id))))
                                (lastseen (or (sub-value 'lastseen resolution)
-                                             0.0))
-                               (boundingbox (desig-prop-value perception-result
-                                                              'boundingbox))
-                               (pose-bb (sub-value 'pose boundingbox))
-                               (dimensions-3d (sub-value 'dimensions-3d boundingbox))
-                               (additional-properties
-                                 (append
-                                  (when dimensions-3d
-                                    `((plane-distance ,(/ (elt dimensions-3d 2) 2))))
-                                  `((at ,(make-designator
-                                          'location
-                                          `((pose
-                                             ,(cl-tf2:do-transform
-                                               *tf2*
-                                               (cond ((and pose
-                                                           (find 'flat (desig-prop-values
-                                                                        perception-result
-                                                                        'shape)))
-                                                      pose)
-                                                     (pose-bb pose-bb)
-                                                     (t pose))
-                                               target-frame))))))
-                                  `((name ,(intern (concatenate 'string "OBJECT"
-                                                                (write-to-string
-                                                                 (truncate id)))
-                                                   'desig-props)))
-                                  `((dimensions ,dimensions-3d)))))
+                                             0.0)))
                           (when (< lastseen 2.0d0)
-                            (make-designator 'object (append new-description
-                                                             additional-properties)
-                                             perception-result))))))
+                            (let* ((pose (desig-prop-value perception-result 'pose))
+                                   (id (or (sub-value 'objectid resolution)
+                                           (parse-integer
+                                            (desig-prop-value perception-result
+                                                              'desig-props::id))))
+                                   (boundingbox (desig-prop-value perception-result
+                                                                  'boundingbox))
+                                   (pose-bb (sub-value 'pose boundingbox))
+                                   (dimensions-3d (sub-value 'dimensions-3d boundingbox))
+                                   (additional-properties
+                                     (append
+                                      (when dimensions-3d
+                                        `((plane-distance ,(/ (elt dimensions-3d 2) 2))))
+                                      `((at ,(make-designator
+                                              'location
+                                              `((pose
+                                                 ,(do-transform-safe
+                                                    *tf2*
+                                                    (restamp-pose-stamped
+                                                     (cond ((and pose
+                                                                 (find 'flat (desig-prop-values
+                                                                              perception-result
+                                                                              'shape)))
+                                                            pose)
+                                                           (pose-bb pose-bb)
+                                                           (t pose)))
+                                                    target-frame))))))
+                                      `((name ,(intern (concatenate 'string "OBJECT"
+                                                                    (write-to-string
+                                                                     (truncate id)))
+                                                       'desig-props)))
+                                      `((dimensions ,dimensions-3d)))))
+                              (make-designator 'object (append new-description
+                                                               additional-properties)
+                                               perception-result)))))))
                perception-results)))
         (cram-language::on-finish-perception-request log-id results)
         results))))
@@ -303,10 +319,11 @@ property in their designator."
                           :mesh desig-props::mondamin :color (0.8 0.4 0.2))))))
     (moveit:register-collision-object
      object :add t
-     :pose-stamped (cl-tf2:do-transform
-                    *tf2*
-                    (desig-prop-value (desig-prop-value object 'at) 'pose)
-                    *object-reference-frame*))))
+     :pose-stamped (do-transform-safe
+                     *tf2*
+                     (restamp-pose-stamped
+                      (desig-prop-value (desig-prop-value object 'at) 'pose))
+                     *object-reference-frame*))))
 
 (defun update-objects (objects)
   "Updates objects' poses in the current bullet world based on the
@@ -323,9 +340,10 @@ property in their designator."
                           ?w ,name ,pose)))))
     (moveit:register-collision-object
      object :add t
-     :pose-stamped (cl-tf2:do-transform
-                    *tf2*
-                    (desig-prop-value (desig-prop-value object 'at) 'pose)
+     :pose-stamped (do-transform-safe
+                     *tf2*
+                     (restamp-pose-stamped
+                      (desig-prop-value (desig-prop-value object 'at) 'pose))
                     *object-reference-frame*))))
 
 (defmethod designators-match ((template object-designator)

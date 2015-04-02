@@ -79,7 +79,10 @@
  ik-root-link at `goal-pose'."
   (with-slots (cl-tf:frame-id cl-tf:stamp cl-tf:translation cl-tf:rotation) goal-transform
     (get-ik 
-     interface 
-     (cl-tf:make-pose-stamped cl-tf:frame-id cl-tf:stamp cl-tf:translation cl-tf:rotation)
+     interface
+     (cl-transforms-plugin:make-pose-stamped
+      (cl-tf:make-pose
+       cl-tf:translation
+       cl-tf:rotation)
+      cl-tf:frame-id cl-tf:stamp)
      seed-state)))
-     

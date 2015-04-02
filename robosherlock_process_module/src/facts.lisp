@@ -73,12 +73,13 @@
     (case relation
       (:on (let ((above-surface-threshold 0.3)
                  (origin (tf:origin pose)))
-             `(,(tf:make-pose-stamped
-                 "/map" 0.0
-                 (tf:make-3d-vector (tf:x origin) (tf:y origin)
-                                    (+ (tf:z origin)
-                                       (/ above-surface-threshold 2)))
-                 (tf:orientation pose))
+             `(,(cl-transforms-plugin:make-pose-stamped
+                 (cl-tf:make-pose
+                  (tf:make-3d-vector (tf:x origin) (tf:y origin)
+                                     (+ (tf:z origin)
+                                        (/ above-surface-threshold 2)))
+                  (tf:orientation pose))
+                 "/map" 0.0)
                ,(/ (tf:x dimensions) 2)
                ,(/ (tf:y dimensions) 2)
                ,(/ above-surface-threshold 2)))))))

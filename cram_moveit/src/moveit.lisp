@@ -104,15 +104,18 @@ MoveIt! framework and registers known conditions."
                          (mapcar (lambda (x) (string x)) touch-links))
                        (link-names (cond ((listp link-name) link-name)
                                          (t `(,link-name))))
-                       (poses-stamped (mapcar
-                                       (lambda (pose-stamped)
-                                         (tf:pose->pose-stamped
-                                          (cl-tf2::unslash-frame (tf:frame-id
-                                                                  pose-stamped))
-                                          (tf:stamp pose-stamped)
-                                          pose-stamped))
-                                       (cond ((listp pose-stamped) pose-stamped)
-                                             (t `(,pose-stamped)))))
+                       (poses-stamped
+                         (mapcar
+                          (lambda (pose-stamped)
+                            (tf:pose->pose-stamped
+                             (cl-tf2::unslash-frame
+                              (cl-tf2:get-frame-id
+                               pose-stamped))
+                             (cl-tf2:get-time-stamp
+                              pose-stamped)
+                             pose-stamped))
+                          (cond ((listp pose-stamped) pose-stamped)
+                                (t `(,pose-stamped)))))
                        (max-tilts (cond ((listp max-tilt) max-tilt)
                                         (t `(,max-tilt))))
                        (reference-frames

@@ -422,10 +422,12 @@
           (when pose
             (let* ((robot-pose-map
                      (cl-tf2:do-transform
-                      *tf2* (tf:make-pose-stamped
-                             "base_footprint" 0.0
-                             (tf:make-identity-vector)
-                             (tf:make-identity-rotation))
+                      *tf2*
+                       (cl-transforms-plugin:make-pose-stamped
+                        (cl-tf:make-pose
+                         (tf:make-identity-vector)
+                         (tf:make-identity-rotation))
+                        "base_footprint" 0.0)
                       "map"))
                    (object-pose-map
                      (cl-tf2:do-transform
@@ -458,10 +460,12 @@
           (when pose
             (let* ((robot-pose-map
                      (cl-tf2:do-transform
-                      *tf2* (tf:make-pose-stamped
-                             "base_footprint" 0.0
-                             (tf:make-identity-vector)
-                             (tf:make-identity-rotation))
+                      *tf2*
+                       (cl-transforms-plugin:make-pose-stamped
+                        (cl-tf:make-pose
+                         (tf:make-identity-vector)
+                         (tf:make-identity-rotation))
+                        "base_footprint" 0.0)
                       "map"))
                    (putdown-pose-map
                      (cl-tf2:do-transform

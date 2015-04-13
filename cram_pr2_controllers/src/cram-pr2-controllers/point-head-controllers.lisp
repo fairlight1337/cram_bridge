@@ -90,8 +90,8 @@
  PoseStamped `ps'."
   (roslisp:make-message
    "geometry_msgs/PointStamped"
-   (stamp header) (tf:stamp ps)
-   (frame_id header) (tf:frame-id ps)
+   (stamp header) (cl-tf2:get-time-stamp ps)
+   (frame_id header) (cl-tf2:get-frame-id ps)
    (x point) (cl-transforms:x
               (cl-transforms:origin ps))
    (y point) (cl-transforms:y

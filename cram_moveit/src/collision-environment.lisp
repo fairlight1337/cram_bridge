@@ -298,7 +298,7 @@ bridge.")
             (mesh-shapes (slot-value col-obj 'mesh-shapes))
             (plane-shapes (slot-value col-obj 'plane-shapes)))
         (roslisp:ros-info (moveit) "Transforming link from ~a into ~a"
-                          (tf:frame-id current-pose-stamped)
+                          (cl-tf2:get-frame-id current-pose-stamped)
                           target-link)
         (let* ((pose-in-link
                  (cl-tf2:do-transform *tf2* current-pose-stamped target-link))
@@ -356,7 +356,7 @@ bridge.")
                  *tf*
                  :timeout 5.0
                  :time time
-                 :source-frame (tf:frame-id current-pose-stamped)
+                 :source-frame (cl-tf2:get-frame-id current-pose-stamped)
                  :target-frame target-link)
           (cpl:fail 'pose-not-transformable-into-link))
         (let* ((pose-in-link (cl-tf2:do-transform
@@ -397,4 +397,4 @@ bridge.")
           (roslisp:ros-info
            (moveit)
            "Detaching collision object `~a' from link `~a'."
-           name (tf:frame-id current-pose-stamped)))))))
+           name (cl-tf2:get-frame-id current-pose-stamped)))))))

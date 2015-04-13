@@ -107,7 +107,7 @@ MoveIt! framework and registers known conditions."
                        (poses-stamped
                          (mapcar
                           (lambda (pose-stamped)
-                            (tf:pose->pose-stamped
+                            (cl-transforms-plugin:pose->pose-stamped
                              (cl-tf2::unslash-frame
                               (cl-tf2:get-frame-id
                                pose-stamped))

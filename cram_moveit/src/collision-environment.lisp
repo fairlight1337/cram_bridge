@@ -361,14 +361,9 @@ bridge.")
           (cpl:fail 'pose-not-transformable-into-link))
         (let* ((pose-in-link (cl-tf2:do-transform
                                *tf2*
-                               (cl-transforms-plugin:copy-pose-stamped
+                               (cl-transforms-plugin:copy-ext-pose-stamped
                                 current-pose-stamped
-                                :header
-                                (make-instance
-                                 'cl-transforms-plugin:header
-                                 :frame-id (cl-transforms-plugin::get-frame-id
-                                            current-pose-stamped)
-                                 :stamp time))
+                                :stamp time)
                                target-link))
                (obj-msg-plain (create-collision-object-message
                                name pose-in-link

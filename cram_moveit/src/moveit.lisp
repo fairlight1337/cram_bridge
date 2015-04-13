@@ -124,7 +124,7 @@ MoveIt! framework and registers known conditions."
                                        reference-frame)
                                       (t `(,reference-frame))))
                                (poses-stamped
-                                (list (tf:frame-id (car poses-stamped)))))))
+                                (list (cl-tf2:get-frame-id (car poses-stamped)))))))
                   (let* ((mpreq (make-message
                                  "moveit_msgs/MotionPlanRequest"
                                  :group_name planning-group
@@ -650,8 +650,8 @@ as only the final configuration IK is generated."
                   :link_name link-name
                   :header (make-message
                            "std_msgs/Header"
-                           :frame_id (tf:frame-id pose-stamped)
-                           :stamp (tf:stamp pose-stamped))
+                           :frame_id (cl-tf2:get-frame-id pose-stamped)
+                           :stamp (cl-tf2:get-time-stamp pose-stamped))
                   :constraint_region
                   (make-message
                    "moveit_msgs/BoundingVolume"
@@ -670,8 +670,8 @@ as only the final configuration IK is generated."
             :link_name link-name
             :header (make-message
                      "std_msgs/Header"
-                     :frame_id (tf:frame-id pose-stamped)
-                     :stamp (tf:stamp pose-stamped))
+                     :frame_id (cl-tf2:get-frame-id pose-stamped)
+                     :stamp (cl-tf2:get-time-stamp pose-stamped))
             :orientation
             (make-message
              "geometry_msgs/Quaternion"
@@ -737,7 +737,7 @@ as only the final configuration IK is generated."
                  (make-message
                   "std_msgs/Header"
                   :frame_id (concatenate 'string "/"
-                                         (tf:frame-id pose-stamped-oc)))
+                                         (cl-tf2:get-frame-id pose-stamped-oc)))
                  :joint_names (vector "virtual_joint")
                  :joint_transforms
                  (vector (make-message

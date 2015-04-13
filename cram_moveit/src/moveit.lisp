@@ -107,13 +107,13 @@ MoveIt! framework and registers known conditions."
                        (poses-stamped
                          (mapcar
                           (lambda (pose-stamped)
-                            (cl-transforms-plugin:pose->pose-stamped
+                            (cl-transforms-plugin:make-pose-stamped
+                             pose-stamped
                              (cl-tf2::unslash-frame
                               (cl-tf2:get-frame-id
                                pose-stamped))
                              (cl-tf2:get-time-stamp
-                              pose-stamped)
-                             pose-stamped))
+                              pose-stamped)))
                           (cond ((listp pose-stamped) pose-stamped)
                                 (t `(,pose-stamped)))))
                        (max-tilts (cond ((listp max-tilt) max-tilt)

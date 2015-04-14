@@ -56,7 +56,7 @@
   (:documentation "Queries `interface' for an IK solution for `goal' using `seed-state' as
  a starting point of the solver."))
 
-(defmethod get-ik ((interface ik-proxy-interface) (goal-pose cl-tf:pose-stamped)
+(defmethod get-ik ((interface ik-proxy-interface) (goal-pose cl-transforms-plugin:pose-stamped)
                    (seed-state vector))
   "Queries the server behind `interface' for an IK solution around `seed-state' putting the
  ik-root-link at `goal-pose'."
@@ -73,16 +73,16 @@
       (error 'ik-query-error :text "IK Solver returned with no solution, of course."))
     solution))
 
-(defmethod get-ik ((interface ik-proxy-interface) (goal-transform cl-tf:stamped-transform)
+(defmethod get-ik ((interface ik-proxy-interface) (goal-transform cl-transforms-plugin:transform-stamped)
                    (seed-state vector))
   "Queries the server behind `interface' for an IK solution around `seed-state' putting the
  ik-root-link at `goal-pose'."
-  (with-slots (cl-tf:frame-id cl-tf:stamp cl-tf:translation cl-tf:rotation) goal-transform
+  (with-slots (cl-transforms:frame-id cl-transforms:stamp cl-transforms:translation cl-transforms:rotation) goal-transform
     (get-ik 
      interface
      (cl-transforms-plugin:make-pose-stamped
-      (cl-tf:make-pose
-       cl-tf:translation
-       cl-tf:rotation)
-      cl-tf:frame-id cl-tf:stamp)
+      (cl-transforms:make-pose
+       cl-transforms:translation
+       cl-transforms:rotation)
+      cl-transforms:frame-id cl-transforms:stamp)
      seed-state)))

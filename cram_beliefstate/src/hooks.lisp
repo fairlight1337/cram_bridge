@@ -123,9 +123,9 @@
   ;;          (entry (find obj-name surfaces :test (lambda (x y)
   ;;                                                 (string= x (cdr y))))))
   ;;     (when entry
-  ;;       (let ((offset-pose (tf:make-pose (tf:v+ (tf:origin pose)
-  ;;                                               (tf:make-3d-vector 0 0 0.01))
-  ;;                                        (tf:orientation pose))))
+  ;;       (let ((offset-pose (cl-transforms:make-pose (cl-transforms:v+ (cl-transforms:origin pose)
+  ;;                                               (cl-transforms:make-3d-vector 0 0 0.01))
+  ;;                                        (cl-transforms:orientation pose))))
   ;;         (beliefstate:register-interactive-object
   ;;          (car entry) 'box offset-pose
   ;;          (vector (sem-map-coll-env::x dimensions)
@@ -421,27 +421,27 @@
                      (cl-tf2:do-transform
                       *tf2*
                        (cl-transforms-plugin:make-pose-stamped
-                        (cl-tf:make-pose
-                         (tf:make-identity-vector)
-                         (tf:make-identity-rotation))
+                        (cl-transforms:make-pose
+                         (cl-transforms:make-identity-vector)
+                         (cl-transforms:make-identity-rotation))
                         "base_footprint" 0.0)
                       "map"))
                    (object-pose-map
                      (cl-tf2:do-transform
                       *tf2* pose "map"))
                    (distance-2d
-                     (tf:v-dist (tf:make-3d-vector
-                                 (tf:x (tf:origin robot-pose-map))
-                                 (tf:y (tf:origin robot-pose-map))
+                     (cl-transforms:v-dist (cl-transforms:make-3d-vector
+                                 (cl-transforms:x (cl-transforms:origin robot-pose-map))
+                                 (cl-transforms:y (cl-transforms:origin robot-pose-map))
                                  0.0)
-                                (tf:make-3d-vector
-                                 (tf:x (tf:origin object-pose-map))
-                                 (tf:y (tf:origin object-pose-map))
+                                (cl-transforms:make-3d-vector
+                                 (cl-transforms:x (cl-transforms:origin object-pose-map))
+                                 (cl-transforms:y (cl-transforms:origin object-pose-map))
                                  0.0)))
                    (angle-difference
-                     (tf:angle-between-quaternions
-                      (tf:orientation robot-pose-map)
-                      (tf:orientation object-pose-map))))
+                     (cl-transforms:angle-between-quaternions
+                      (cl-transforms:orientation robot-pose-map)
+                      (cl-transforms:orientation object-pose-map))))
               (annotate-parameter 'object-type object-type)
               (annotate-parameter 'distance-2d
                                   distance-2d)
@@ -459,27 +459,27 @@
                      (cl-tf2:do-transform
                       *tf2*
                        (cl-transforms-plugin:make-pose-stamped
-                        (cl-tf:make-pose
-                         (tf:make-identity-vector)
-                         (tf:make-identity-rotation))
+                        (cl-transforms:make-pose
+                         (cl-transforms:make-identity-vector)
+                         (cl-transforms:make-identity-rotation))
                         "base_footprint" 0.0)
                       "map"))
                    (putdown-pose-map
                      (cl-tf2:do-transform
                       *tf2* pose "map"))
                    (distance-2d
-                     (tf:v-dist (tf:make-3d-vector
-                                 (tf:x (tf:origin robot-pose-map))
-                                 (tf:y (tf:origin robot-pose-map))
+                     (cl-transforms:v-dist (cl-transforms:make-3d-vector
+                                 (cl-transforms:x (cl-transforms:origin robot-pose-map))
+                                 (cl-transforms:y (cl-transforms:origin robot-pose-map))
                                  0.0)
-                                (tf:make-3d-vector
-                                 (tf:x (tf:origin putdown-pose-map))
-                                 (tf:y (tf:origin putdown-pose-map))
+                                (cl-transforms:make-3d-vector
+                                 (cl-transforms:x (cl-transforms:origin putdown-pose-map))
+                                 (cl-transforms:y (cl-transforms:origin putdown-pose-map))
                                  0.0)))
                    (angle-difference
-                     (tf:angle-between-quaternions
-                      (tf:orientation robot-pose-map)
-                      (tf:orientation putdown-pose-map))))
+                     (cl-transforms:angle-between-quaternions
+                      (cl-transforms:orientation robot-pose-map)
+                      (cl-transforms:orientation putdown-pose-map))))
               (annotate-parameter 'object-type object-type)
               (annotate-parameter 'distance-2d distance-2d)
               (annotate-parameter 'angle-difference-2d angle-difference))))))))

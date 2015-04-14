@@ -352,13 +352,6 @@ bridge.")
             (mesh-shapes (slot-value col-obj 'mesh-shapes))
             (plane-shapes (slot-value col-obj 'plane-shapes))
             (time (roslisp:ros-time)))
-        (unless (tf:wait-for-transform
-                 *tf*
-                 :timeout 5.0
-                 :time time
-                 :source-frame (cl-tf2:get-frame-id current-pose-stamped)
-                 :target-frame target-link)
-          (cpl:fail 'pose-not-transformable-into-link))
         (let* ((pose-in-link (cl-tf2:do-transform
                                *tf2*
                                (cl-transforms-plugin:copy-ext-pose-stamped

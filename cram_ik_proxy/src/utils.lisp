@@ -46,12 +46,12 @@
   "Creates and returns an instance of type 'iai_kinematics_msgs/PositionIKRequest' filled
  with the contents of `interface', `goal-pose' and `seed-state'."
   (declare (type ik-proxy-interface interface)
-           (type cl-tf:pose-stamped goal-pose)
+           (type cl-transforms-plugin:pose-stamped goal-pose)
            (type vector seed-state))
   (roslisp:make-msg
    "iai_kinematics_msgs/PositionIKRequest"
    :ik_link_name (ik-tip-link interface)
-   :pose_stamped (tf:pose-stamped->msg goal-pose)
+   :pose_stamped (cl-transforms-plugin:pose-stamped->msg goal-pose)
    :ik_seed_state (make-seed-state-msg interface seed-state)))
 
 (defun make-seed-state-msg (interface seed-state)

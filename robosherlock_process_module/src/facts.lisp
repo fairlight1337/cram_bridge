@@ -72,16 +72,16 @@
         (dimensions (sem-map-utils::dimensions semantic-map-object)))
     (case relation
       (:on (let ((above-surface-threshold 0.3)
-                 (origin (tf:origin pose)))
+                 (origin (cl-transforms:origin pose)))
              `(,(cl-transforms-plugin:make-pose-stamped
-                 (cl-tf:make-pose
-                  (tf:make-3d-vector (tf:x origin) (tf:y origin)
-                                     (+ (tf:z origin)
+                 (cl-transforms:make-pose
+                  (cl-transforms:make-3d-vector (cl-transforms:x origin) (cl-transforms:y origin)
+                                     (+ (cl-transforms:z origin)
                                         (/ above-surface-threshold 2)))
-                  (tf:orientation pose))
+                  (cl-transforms:orientation pose))
                  "/map" 0.0)
-               ,(/ (tf:x dimensions) 2)
-               ,(/ (tf:y dimensions) 2)
+               ,(/ (cl-transforms:x dimensions) 2)
+               ,(/ (cl-transforms:y dimensions) 2)
                ,(/ above-surface-threshold 2)))))))
 
 (defun refine-description (description)

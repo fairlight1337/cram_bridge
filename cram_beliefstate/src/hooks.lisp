@@ -429,17 +429,17 @@
                       *tf2* pose "map"))
                    (distance-2d
                      (cl-transforms:v-dist (cl-transforms:make-3d-vector
-                                 (cl-transforms:x (cl-transforms:origin robot-pose-map))
-                                 (cl-transforms:y (cl-transforms:origin robot-pose-map))
+                                 (cl-transforms:x (cl-transforms:origin (cl-transforms-plugin:pose robot-pose-map)))
+                                 (cl-transforms:y (cl-transforms:origin (cl-transforms-plugin:pose robot-pose-map)))
                                  0.0)
                                 (cl-transforms:make-3d-vector
-                                 (cl-transforms:x (cl-transforms:origin object-pose-map))
-                                 (cl-transforms:y (cl-transforms:origin object-pose-map))
+                                 (cl-transforms:x (cl-transforms:origin (cl-transforms-plugin:pose object-pose-map)))
+                                 (cl-transforms:y (cl-transforms:origin (cl-transforms-plugin:pose object-pose-map)))
                                  0.0)))
                    (angle-difference
                      (cl-transforms:angle-between-quaternions
-                      (cl-transforms:orientation robot-pose-map)
-                      (cl-transforms:orientation object-pose-map))))
+                      (cl-transforms:orientation (cl-transforms-plugin:pose robot-pose-map))
+                      (cl-transforms:orientation (cl-transforms-plugin:pose object-pose-map)))))
               (annotate-parameter 'object-type object-type)
               (annotate-parameter 'distance-2d
                                   distance-2d)
@@ -467,17 +467,17 @@
                       *tf2* pose "map"))
                    (distance-2d
                      (cl-transforms:v-dist (cl-transforms:make-3d-vector
-                                 (cl-transforms:x (cl-transforms:origin robot-pose-map))
-                                 (cl-transforms:y (cl-transforms:origin robot-pose-map))
+                                 (cl-transforms:x (cl-transforms:origin (cl-transforms-plugin:pose robot-pose-map)))
+                                 (cl-transforms:y (cl-transforms:origin (cl-transforms-plugin:pose robot-pose-map)))
                                  0.0)
                                 (cl-transforms:make-3d-vector
-                                 (cl-transforms:x (cl-transforms:origin putdown-pose-map))
-                                 (cl-transforms:y (cl-transforms:origin putdown-pose-map))
+                                 (cl-transforms:x (cl-transforms:origin (cl-transforms-plugin:pose putdown-pose-map)))
+                                 (cl-transforms:y (cl-transforms:origin (cl-transforms-plugin:pose putdown-pose-map)))
                                  0.0)))
                    (angle-difference
                      (cl-transforms:angle-between-quaternions
-                      (cl-transforms:orientation robot-pose-map)
-                      (cl-transforms:orientation putdown-pose-map))))
+                      (cl-transforms:orientation (cl-transforms-plugin:pose robot-pose-map))
+                      (cl-transforms:orientation (cl-transforms-plugin:pose putdown-pose-map)))))
               (annotate-parameter 'object-type object-type)
               (annotate-parameter 'distance-2d distance-2d)
               (annotate-parameter 'angle-difference-2d angle-difference))))))))

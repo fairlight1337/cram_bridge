@@ -136,8 +136,9 @@ MoveIt! framework and registers known conditions."
                                   :reference-frames reference-frames
                                   :max-tilts max-tilts
                                   :reference-orientations
-                                  (mapcar (lambda (pose)
-                                            (cl-transforms:orientation pose))
+                                  (mapcar (lambda (pose-stamped)
+                                            (cl-transforms:orientation
+                                             (cl-transforms-plugin:pose pose-stamped)))
                                           poses-stamped))
                                  :goal_constraints
                                  (map 'vector #'identity
@@ -675,10 +676,18 @@ as only the final configuration IK is generated."
             :orientation
             (make-message
              "geometry_msgs/Quaternion"
-             :x (cl-transforms:x (cl-transforms:orientation pose-stamped))
-             :y (cl-transforms:y (cl-transforms:orientation pose-stamped))
-             :z (cl-transforms:z (cl-transforms:orientation pose-stamped))
-             :w (cl-transforms:w (cl-transforms:orientation pose-stamped)))
+             :x (cl-transforms:x
+                 (cl-transforms:orientation
+                  (cl-transforms-plugin:pose pose-stamped)))
+             :y (cl-transforms:y
+                 (cl-transforms:orientation
+                  (cl-transforms-plugin:pose pose-stamped)))
+             :z (cl-transforms:z
+                 (cl-transforms:orientation
+                  (cl-transforms-plugin:pose pose-stamped)))
+             :w (cl-transforms:w
+                 (cl-transforms:orientation
+                  (cl-transforms-plugin:pose pose-stamped))))
             :absolute_x_axis_tolerance tolerance-radius
             :absolute_y_axis_tolerance tolerance-radius
             :absolute_z_axis_tolerance tolerance-radius))))
@@ -718,8 +727,10 @@ as only the final configuration IK is generated."
 (defun check-base-pose-validity (pose-stamped)
   (with-lock-held (*moveit-pose-validity-check-lock*)
     (let* ((pose-stamped-oc (cl-tf2:do-transform *tf2* pose-stamped "odom_combined"))
-           (origin (cl-transforms:origin pose-stamped-oc))
-           (orientation (cl-transforms:orientation pose-stamped-oc)))
+           (origin (cl-transforms:origin
+                    (cl-transforms-plugin:pose pose-stamped-oc)))
+           (orientation (cl-transforms:orientation
+                         (cl-transforms-plugin:pose pose-stamped-oc))))
       (let ((adv (roslisp:advertise "/dhdhdh" "geometry_msgs/PoseStamped")))
         (roslisp:publish adv (cl-transforms-plugin:pose-stamped->msg pose-stamped-oc)))
       (let ((result

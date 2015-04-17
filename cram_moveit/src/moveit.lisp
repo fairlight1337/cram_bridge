@@ -108,7 +108,7 @@ MoveIt! framework and registers known conditions."
                          (mapcar
                           (lambda (pose-stamped)
                             (cl-transforms-plugin:make-pose-stamped
-                             pose-stamped
+                             (cl-transforms-plugin:pose pose-stamped)
                              (cl-tf2::unslash-frame
                               (cl-tf2:get-frame-id
                                pose-stamped))
@@ -662,7 +662,7 @@ as only the final configuration IK is generated."
                                  :type (roslisp-msg-protocol:symbol-code
                                         'shape_msgs-msg:solidprimitive :sphere)
                                  :dimensions (vector tolerance-radius)))
-                   :primitive_poses (vector (cl-transforms-plugin:pose->msg pose-stamped)))))))
+                   :primitive_poses (vector (cl-transforms-plugin:pose->msg (cl-transforms-plugin:pose pose-stamped))))))))
           :orientation_constraints
           (vector
            (make-message

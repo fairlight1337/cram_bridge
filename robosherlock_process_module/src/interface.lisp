@@ -299,11 +299,12 @@ by the `name' property specified in their designator."
 consist of boxes of dimensions as specified in the `dimensions'
 property in their designator."
   (dolist (object objects)
-    (let ((pose (desig-prop-value
-                 (desig-prop-value object 'at)
-                 'pose))
-          (dimensions (desig-prop-value object 'dimensions))
-          (name (desig-prop-value object 'name)))
+    (let* ((pose-stamped (desig-prop-value
+                          (desig-prop-value object 'at)
+                          'pose))
+           (pose (cl-transforms-plugin:pose pose-stamped))
+           (dimensions (desig-prop-value object 'dimensions))
+           (name (desig-prop-value object 'name)))
       (ros-info (robosherlock-pm) "Add object: ~a" name)
       ;; (crs:prolog `(and (btr:bullet-world ?w)
       ;;                   (btr:assert

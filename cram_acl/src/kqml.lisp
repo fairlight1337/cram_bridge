@@ -28,6 +28,21 @@
 
 (in-package :cram-acl)
 
+(defvar *known-types*
+  `(("tell" kqml-performative-tell)
+    ("untell" kqml-performative-untell)
+    ("deny" kqml-performative-deny)
+    ("error" kqml-response-error)
+    ("sorry" kqml-response-sorry)))
+
+(defun class-for-type (type)
+  (cadr (assoc type *known-types*
+               :test (lambda (x y) (string= x y)))))
+
+(defun type-for-class (class)
+  (car (find class *known-types*
+             :test (lambda (x y) (eql x (cadr y))))))
+
 ;;;
 ;;; KQML Base Classes
 ;;;
@@ -232,7 +247,12 @@
 
 (defgeneric kqml->alist (kqml)
   (:method (kqml)
-    (mapcar (lambda (slot)
-              (let ((slot-name (sb-mop:slot-definition-name slot)))
-                `(,slot-name ,(slot-value kqml slot-name))))
-            (sb-mop:class-slots (class-of kqml)))))
+    (append
+     `((type ,(type-for-class (class-name (class-of kqml)))))
+     (remove-if-not
+      #'identity
+      (mapcar
+       (lambda (slot)
+         (let ((slot-name (sb-mop:slot-definition-name slot)))
+           `(,slot-name ,(slot-value kqml slot-name))))
+       (sb-mop:class-slots (class-of kqml)))))))

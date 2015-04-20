@@ -486,3 +486,22 @@
               (annotate-parameter 'object-type object-type)
               (annotate-parameter 'distance-2d distance-2d)
               (annotate-parameter 'angle-difference-2d angle-difference))))))))
+
+(def-logging-hook cram-language::on-speech-act-begin (details)
+  (let ((id (start-node "SPEECH-ACT")))
+    (add-designator-to-node
+     (make-designator 'action details) id :annotation "speech-act-details")
+    (labels ((assoc-val (symbol)
+               (cadr (assoc symbol details
+                            :test
+                            (lambda (x y)
+                              (string=
+                               (symbol-name x)
+                               (symbol-name y)))))))
+      (annotate-parameter 'sender (assoc-val 'sender))
+      (annotate-parameter 'receiver (assoc-val 'receiver))
+      (annotate-parameter 'content (assoc-val 'content)))
+    id))
+
+(def-logging-hook cram-language::on-speech-act-finish (log-id)
+  (stop-node log-id))

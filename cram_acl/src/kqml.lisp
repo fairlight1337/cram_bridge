@@ -208,29 +208,31 @@
              into final-string
            finally (return final-string))))))
 
-(defgeneric kqml->string (kqml))
+(defgeneric kqml->string (kqml)
+  (:method ((kqml kqml-performative-tell))
+    (kqml-tokens->string
+     "tell" kqml
+     `(content language ontology in-reply-to force sender receiver)))
+  (:method ((kqml kqml-performative-untell))
+    (kqml-tokens->string
+     "untell" kqml
+     `(content language ontology in-reply-to force sender receiver)))
+  (:method ((kqml kqml-performative-deny))
+    (kqml-tokens->string
+     "deny" kqml
+     `(content language ontology in-reply-to sender receiver)))
+  (:method ((kqml kqml-response-error))
+    (kqml-tokens->string
+     "error" kqml
+     `(in-reply-to sender receiver comment code)))
+  (:method ((kqml kqml-response-sorry))
+    (kqml-tokens->string
+     "sorry" kqml
+     `(in-reply-to sender receiver comment))))
 
-(defmethod kqml->string ((kqml kqml-performative-tell))
-  (kqml-tokens->string
-   "tell" kqml
-   `(content language ontology in-reply-to force sender receiver)))
-
-(defmethod kqml->string ((kqml kqml-performative-untell))
-  (kqml-tokens->string
-   "untell" kqml
-   `(content language ontology in-reply-to force sender receiver)))
-
-(defmethod kqml->string ((kqml kqml-performative-deny))
-  (kqml-tokens->string
-   "deny" kqml
-   `(content language ontology in-reply-to sender receiver)))
-
-(defmethod kqml->string ((kqml kqml-response-error))
-  (kqml-tokens->string
-   "error" kqml
-   `(in-reply-to sender receiver comment code)))
-
-(defmethod kqml->string ((kqml kqml-response-sorry))
-  (kqml-tokens->string
-   "sorry" kqml
-   `(in-reply-to sender receiver comment)))
+(defgeneric kqml->alist (kqml)
+  (:method (kqml)
+    (mapcar (lambda (slot)
+              (let ((slot-name (sb-mop:slot-definition-name slot)))
+                `(,slot-name ,(slot-value kqml slot-name))))
+            (sb-mop:class-slots (class-of kqml)))))

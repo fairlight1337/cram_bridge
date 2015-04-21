@@ -23,13 +23,11 @@
   
   <!-- Dependencies needed to compile this package. -->
   <build_depend>roslisp</build_depend>
-  <build_depend>actionlib</build_depend>
   <build_depend>cram_language</build_depend>
   <build_depend>designator_integration_lisp</build_depend>
   
   <!-- Dependencies needed after this package is compiled. -->
   <run_depend>roslisp</run_depend>
-  <run_depend>actionlib</run_depend>
   <run_depend>cram_language</run_depend>
   <run_depend>designator_integration_lisp</run_depend>
 

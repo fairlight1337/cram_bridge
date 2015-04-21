@@ -38,7 +38,6 @@
                cram-language
                
                ;; Communication
-               actionlib
                std_msgs-msg
                designator-integration-lisp
                designator_integration_msgs-msg

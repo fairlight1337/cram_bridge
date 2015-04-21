@@ -31,6 +31,7 @@
   :description "CRAM Belief State Interface"
 
   :depends-on (;; Functionality
+               roslisp
                cram-roslisp-common
                cram-utilities
                designators

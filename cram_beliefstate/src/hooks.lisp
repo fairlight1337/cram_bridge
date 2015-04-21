@@ -497,10 +497,15 @@
                             (lambda (x y)
                               (string=
                                (symbol-name x)
-                               (symbol-name y)))))))
-      (annotate-parameter 'sender (assoc-val 'sender))
-      (annotate-parameter 'receiver (assoc-val 'receiver))
-      (annotate-parameter 'content (assoc-val 'content)))
+                               (symbol-name y))))))
+             (annotate-if-active (symbol)
+               (let ((value (assoc-val symbol)))
+                 (when value
+                   (annotate-parameter symbol value)))))
+      (annotate-if-active 'sender)
+      (annotate-if-active 'receiver)
+      (annotate-if-active 'content)
+      (annotate-if-active 'in-reply-to))
     id))
 
 (def-logging-hook cram-language::on-speech-act-finish (log-id)

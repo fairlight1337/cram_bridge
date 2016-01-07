@@ -415,3 +415,24 @@ bridge.")
            (moveit)
            "Detaching collision object `~a' from link `~a'."
            name (tf:frame-id current-pose-stamped)))))))
+
+(defun detach-all-attachments ()
+  (let* ((planning-scene
+           (roslisp:call-service
+            "/get_planning_scene"
+            'moveit_msgs-srv:GetPlanningScene
+            :components (roslisp:make-message
+                         "moveit_msgs/PlanningSceneComponents"
+                         (components) 4)))
+         (attached-objects
+           (with-fields (scene) planning-scene
+             (with-fields (robot_state) scene
+               (with-fields (attached_collision_objects) robot_state
+                 (map 'list (lambda (attached-collision-object)
+                              (with-fields (link_name object) attached-collision-object
+                                (with-fields (id) object
+                                  `(,link_name ,id))))
+                      attached_collision_objects))))))
+    (loop for attached-object in attached-objects
+          do (destructuring-bind (link-name object-id) attached-object
+               (detach-collision-object-from-link object-id link-name)))))
